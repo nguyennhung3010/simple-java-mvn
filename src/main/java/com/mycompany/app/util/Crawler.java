@@ -2,6 +2,7 @@ package com.mycompany.app.util;
 
 import com.mycompany.app.model.TenderDetail;
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.checkerframework.checker.units.qual.C;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -9,7 +10,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static com.mycompany.app.provider.TenderLinkProvider.getTenderLinks;
@@ -46,16 +46,14 @@ public class Crawler {
             Thread.sleep(3000);
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            // Close the browser
-//            driver.quit();
         }
     }
-    public void excute(String link) {
+    public void craw(String link) {
         try {
             // ✅ Now you're logged in — navigate to data page
             driver.get(link);
-
+            WebElement downloadDetail = driver.findElement(By.id("imgbtn"));
+            downloadDetail.click();
             Thread.sleep(2000);
 
             List<TenderDetail> tenderDetails = new ArrayList<>();
@@ -73,18 +71,22 @@ public class Crawler {
             System.out.println("country " + country);
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            // Close the browser
-//            driver.quit();
         }
     }
 
+    public void excute() {
+        login();
+        List links = getTenderLinks_();
+        try {
+            for (Object link: links) {
+                craw(link.toString());
+            }
+        } finally {
+            driver.quit();
+        }
+    }
     public static void main(String[] args) {
         Crawler crawler = new Crawler();
-        crawler.login();
-        List links = getTenderLinks();
-        for (Object link: links) {
-            crawler.excute(link.toString());
-        }
+        crawler.excute();
     }
 }
